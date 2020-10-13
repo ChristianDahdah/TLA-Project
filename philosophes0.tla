@@ -1,5 +1,5 @@
 ---------------- MODULE philosophes0 ----------------
-(* Philosophes. Version en utilisant l'état des voisins. *)
+(* PPhilosophes. Version en utilisant l'état des voisins. *)
 
 EXTENDS Naturals
 
