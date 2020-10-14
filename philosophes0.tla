@@ -1,5 +1,5 @@
 ---------------- MODULE philosophes0 ----------------
-(* PPhilosophes. Version en utilisant l'Ã©tat des voisins. *)
+(* Philosophes. Version en utilisant l'Ã©tat des voisins. *)
 
 EXTENDS Naturals
 
@@ -19,24 +19,39 @@ VARIABLES
 
 TypeInvariant == [](etat \in [ Philos -> { Hungry, Thinking, Eating }])
 
-(* TODO : autres propriÃ©tÃ©s de philosophes0 (exclusion, vivacitÃ©) *)  
+(* TODO : autres propriétés de philosophes0 (exclusion, vivacitÃ©) *)  
 
 ----------------------------------------------------------------
 
-Init == TRUE  \* Ã€ changer
+(* Au début les philosphes sont dans l'état "Thinking" *)
+Init == 
+    /\ etat = [ i \in 0..N-1 |-> "T" ]
 
-demande(i) == TRUE  \* Ã€ changer
+demande(i) ==
+    /\ etat[i] = "T"
+    /\ etat' = [ etat EXCEPT ![i] = "H" ]
 
-mange(i) == TRUE  \* Ã€ changer
+mange(i) ==
+    /\ etat[i] = "H"
+    /\ etat[gauche(i)] /= "E"
+    /\ etat[droite(i)] /= "E"
+    /\ etat' = [etat EXCEPT ![i] = "E"]
 
-pense(i) == TRUE  \* Ã€ changer
+pense(i) ==
+    /\ etat[i] = "E"
+    /\ etat' = [etat EXCEPT ![i] = "T"]
 
 Next ==
   \E i \in Philos : \/ demande(i)
                     \/ mange(i)
                     \/ pense(i)
 
-Fairness == TRUE \* Ã€ changer
+(* Première WF: le philosophe ne doit pas rester dans un mode attente ou "Hungry" *)
+(* Deuxième WF: le philosophe ne doit 'prendre les ressources' indéfiniment et empêcher les autres de manger*)
+(* Pas de WF sur demande(i) car je n'ai pas de problème qu'un philosophe reste dans the mode "Thinking" *)
+Fairness == \A i \in 0..N-1 :
+    /\ WF_<<etat>> (mange(i))
+    /\ WF_<<etat>> (pense(i))
 
 Spec ==
   /\ Init
