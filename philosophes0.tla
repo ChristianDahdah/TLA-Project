@@ -7,8 +7,8 @@ CONSTANT N
 
 Philos == 0..N-1
 
-gauche(i) == (i+1)%N       \* philosophe Ã  gauche du philo nÂ°i
-droite(i) == (i+N-1)%N     \* philosophe Ã  droite du philo nÂ°i
+gauche(i) == (i+1)%N       \* philosophe à  gauche du philo n°i
+droite(i) == (i+N-1)%N     \* philosophe à  droite du philo n°i
 
 Hungry == "H"
 Thinking == "T"
@@ -19,7 +19,7 @@ VARIABLES
 
 TypeInvariant == [](etat \in [ Philos -> { Hungry, Thinking, Eating }])
 
-(* TODO : autres propriétés de philosophes0 (exclusion, vivacité) *)  
+(* TODO : autres propriÃ©tÃ©s de philosophes0 (exclusion, vivacitÃ©) *)  
 
 (* Si un philosophe mange, il faut s'assurer que le philosophe de droite et de gauche ne mange pas *)
 
@@ -29,7 +29,7 @@ PasDeFamine == \A i \in Philos : etat[i] = Hungry ~> etat[i] = Eating
 
 ----------------------------------------------------------------
 
-(* Au début les philosphes sont dans l'état "Thinking" *)
+(* Au dÃ©but les philosphes sont dans l'Ã©tat "Thinking" *)
 Init == 
     /\ etat = [ i \in Philos |-> Thinking ]
 
@@ -53,8 +53,8 @@ Next ==
                     \/ pense(i)
 
 (* Première WF: le philosophe ne doit pas rester dans un mode attente ou "Hungry" *)
-(* Deuxième WF: le philosophe ne doit 'prendre les ressources' indéfiniment et empêcher les autres de manger*)
-(* Pas de WF sur demande(i) car je n'ai pas de problème qu'un philosophe reste dans the mode "Thinking" *)
+(* Deuxième WF: le philosophe ne doit pas 'prendre les ressources' indéfiniment et empêcher les autres de manger*)
+(* Pas de WF sur demande(i) car je n'ai pas de problème qu'un philosophe reste dans l'Ã©tat "Thinking" *)
 Fairness == \A i \in Philos :
     /\ WF_<<etat>> (mange(i))
     /\ WF_<<etat>> (pense(i))
