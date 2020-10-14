@@ -19,27 +19,33 @@ VARIABLES
 
 TypeInvariant == [](etat \in [ Philos -> { Hungry, Thinking, Eating }])
 
-(* TODO : autres propriétés de philosophes0 (exclusion, vivacitÃ©) *)  
+(* TODO : autres propriétés de philosophes0 (exclusion, vivacité) *)  
+
+(* Si un philosophe mange, il faut s'assurer que le philosophe de droite et de gauche ne mange pas *)
+
+ExclusionMutuelle == \A i \in Philos : etat[i] = Eating => etat[gauche(i)] /= Eating /\ etat[droite(i)] /= Eating 
+
+PasDeFamine == \A i \in Philos : etat[i] = Hungry ~> etat[i] = Eating 
 
 ----------------------------------------------------------------
 
 (* Au début les philosphes sont dans l'état "Thinking" *)
 Init == 
-    /\ etat = [ i \in 0..N-1 |-> "T" ]
+    /\ etat = [ i \in Philos |-> Thinking ]
 
 demande(i) ==
-    /\ etat[i] = "T"
-    /\ etat' = [ etat EXCEPT ![i] = "H" ]
+    /\ etat[i] = Thinking
+    /\ etat' = [ etat EXCEPT ![i] = Hungry ]
 
 mange(i) ==
-    /\ etat[i] = "H"
-    /\ etat[gauche(i)] /= "E"
-    /\ etat[droite(i)] /= "E"
-    /\ etat' = [etat EXCEPT ![i] = "E"]
+    /\ etat[i] = Hungry
+    /\ etat[gauche(i)] /= Eating
+    /\ etat[droite(i)] /= Eating
+    /\ etat' = [etat EXCEPT ![i] = Eating]
 
 pense(i) ==
-    /\ etat[i] = "E"
-    /\ etat' = [etat EXCEPT ![i] = "T"]
+    /\ etat[i] = Eating
+    /\ etat' = [etat EXCEPT ![i] = Thinking]
 
 Next ==
   \E i \in Philos : \/ demande(i)
@@ -49,7 +55,7 @@ Next ==
 (* Première WF: le philosophe ne doit pas rester dans un mode attente ou "Hungry" *)
 (* Deuxième WF: le philosophe ne doit 'prendre les ressources' indéfiniment et empêcher les autres de manger*)
 (* Pas de WF sur demande(i) car je n'ai pas de problème qu'un philosophe reste dans the mode "Thinking" *)
-Fairness == \A i \in 0..N-1 :
+Fairness == \A i \in Philos :
     /\ WF_<<etat>> (mange(i))
     /\ WF_<<etat>> (pense(i))
 
